@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, flash, session
 from mysqlconnection import connectToMySQL
+import re
 
 app = Flask(__name__)
 app.secret_key = "christiano wuz here"
+EMAIL_REGEX= re.compile('^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 @app.route('/')
 def index():
@@ -14,6 +16,10 @@ def valid():
     if (len(request.form['email']) < 1):
         is_valid = False
         flash("Email can not be blank!")
+        return redirect('/')
+    elif not EMAIL_REGEX.match(request.form['email']):
+        is_valid = False
+        flash("Email needs to be Valid!")
         return redirect('/')
     else:
         flash("SUCCESS NEW EMAIL ACQUIRED YO")
